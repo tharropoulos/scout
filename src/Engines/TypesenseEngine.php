@@ -501,15 +501,17 @@ class TypesenseEngine extends Engine
         $collection = $this->typesense->getCollections()->{$model->{$method}()};
 
         $collectionExists = false;
+
         if ($collection->exists()) {
-            // Also check if the collection exists in Typesense to avoid potential errors
+            // Also determine if the collection exists in Typesense...
             $collectionName = $model->{$method}();
 
             try {
                 $this->typesense->collections[$collectionName]->retrieve();
+                
                 $collectionExists = true;
             } catch (TypesenseClientError $e) {
-                // No need to do anything here, collectionExists will remain false
+                //
             }
         }
 
