@@ -497,26 +497,19 @@ class TypesenseEngine extends Engine
     protected function getOrCreateCollectionFromModel($model, bool $indexOperation = true): TypesenseCollection
     {
         $method = $indexOperation ? 'indexableAs' : 'searchableAs';
+        $collectionName = $model->{$method}();
+        $collection = $this->typesense->getCollections()->{$collectionName};
 
-        $collection = $this->typesense->getCollections()->{$model->{$method}()};
+        // Determine if the collection exists in Typesense...
+        try {
+            $collection->retrieve();
 
-        $collectionExists = false;
+            // No error means this exists on the server
+            $collection->setExists(true);
 
-        if ($collection->exists()) {
-            // Also determine if the collection exists in Typesense...
-            $collectionName = $model->{$method}();
-
-            try {
-                $this->typesense->collections[$collectionName]->retrieve();
-
-                $collectionExists = true;
-            } catch (TypesenseClientError $e) {
-                //
-            }
-        }
-
-        if ($collectionExists) {
-            return $this->typesense->getCollections()->{$collectionName};
+            return $collection;
+        } catch (TypesenseClientError $e) {
+            //
         }
 
         $schema = config('scout.typesense.model-settings.'.get_class($model).'.collection-schema') ?? [];
