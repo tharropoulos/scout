@@ -17,6 +17,7 @@ class TypesenseEngine extends Engine
 {
     /**
      * The maximum amount of results that can be fetched per page.
+     *
      * @var int
      */
     private int $maxPerPage = 250;
@@ -37,8 +38,8 @@ class TypesenseEngine extends Engine
 
 
     /**
-     *
      * The maximum amount of results that can be fetched for pagination.
+     *
      * @var int
      */
     protected int $maxTotalResults;
@@ -214,6 +215,7 @@ class TypesenseEngine extends Engine
 
     /**
      * Perform a paginated search on the engine.
+     *
      * @param \Laravel\Scout\Builder $builder
      * @return mixed
      *
