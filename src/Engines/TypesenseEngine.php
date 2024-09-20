@@ -36,7 +36,6 @@ class TypesenseEngine extends Engine
      */
     protected array $searchParameters = [];
 
-
     /**
      * The maximum amount of results that can be fetched for pagination.
      *
@@ -216,7 +215,7 @@ class TypesenseEngine extends Engine
     /**
      * Perform a paginated search on the engine.
      *
-     * @param \Laravel\Scout\Builder $builder
+     * @param  \Laravel\Scout\Builder  $builder
      * @return mixed
      *
      * @throws \Http\Client\Exception
@@ -256,7 +255,6 @@ class TypesenseEngine extends Engine
             'request_params' => $this->buildSearchParameters($builder, 1, $builder->limit ?? $this->maxPerPage),
         ];
     }
-
 
     /**
      * Perform the given search on the engine with pagination.
