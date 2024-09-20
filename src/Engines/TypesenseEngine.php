@@ -48,9 +48,10 @@ class TypesenseEngine extends Engine
      *
      * @param  Typesense  $typesense
      */
-    public function __construct(Typesense $typesense)
+    public function __construct(Typesense $typesense, int $maxTotalResults)
     {
         $this->typesense = $typesense;
+        $this->maxTotalResults = $maxTotalResults;
     }
 
     /**
