@@ -213,52 +213,6 @@ class TypesenseEngine extends Engine
     }
 
     /**
-     * Perform a paginated search on the engine.
-     *
-     * @param  \Laravel\Scout\Builder  $builder
-     * @return mixed
-     *
-     * @throws \Http\Client\Exception
-     * @throws \Typesense\Exceptions\TypesenseClientError
-     */
-    protected function performPaginatedSearch(Builder $builder)
-    {
-        $page = 1;
-        $limit = min($builder->limit ?? $this->maxPerPage, $this->maxPerPage, $this->maxTotalResults);
-        $remainingResults = min($builder->limit ?? $this->maxTotalResults, $this->maxTotalResults);
-
-        $results = new Collection;
-
-        while ($remainingResults > 0) {
-            $search_res = $this->performSearch(
-                $builder,
-                $this->buildSearchParameters($builder, $page, $limit)
-            );
-
-            $results = $results->concat($search_res['hits'] ?? []);
-
-            if ($page === 1) {
-                $totalFound = $search_res['found'] ?? 0;
-            }
-
-            $remainingResults -= $limit;
-            $page++;
-
-            if (count($search_res['hits'] ?? []) < $limit) {
-                break;
-            }
-        }
-
-        return [
-            'hits' => $results->all(),
-            'found' => $results->count(),
-            'out_of' => $totalFound,
-            'page' => 1,
-            'request_params' => $this->buildSearchParameters($builder, 1, $builder->limit ?? $this->maxPerPage),
-        ];
-    }
-
-    /**
      * Perform the given search on the engine with pagination.
      *
      * @param  \Laravel\Scout\Builder  $builder
@@ -296,6 +250,52 @@ class TypesenseEngine extends Engine
         }
 
         return $documents->search($options);
+    }
+
+    /**
+     * Perform a paginated search on the engine.
+     *
+     * @param  \Laravel\Scout\Builder  $builder
+     * @return mixed
+     *
+     * @throws \Http\Client\Exception
+     * @throws \Typesense\Exceptions\TypesenseClientError
+     */
+    protected function performPaginatedSearch(Builder $builder)
+    {
+        $page = 1;
+        $limit = min($builder->limit ?? $this->maxPerPage, $this->maxPerPage, $this->maxTotalResults);
+        $remainingResults = min($builder->limit ?? $this->maxTotalResults, $this->maxTotalResults);
+
+        $results = new Collection;
+
+        while ($remainingResults > 0) {
+            $searchResults = $this->performSearch(
+                $builder,
+                $this->buildSearchParameters($builder, $page, $limit)
+            );
+
+            $results = $results->concat($searchResults['hits'] ?? []);
+
+            if ($page === 1) {
+                $totalFound = $searchResults['found'] ?? 0;
+            }
+
+            $remainingResults -= $limit;
+            $page++;
+
+            if (count($searchResults['hits'] ?? []) < $limit) {
+                break;
+            }
+        }
+
+        return [
+            'hits' => $results->all(),
+            'found' => $results->count(),
+            'out_of' => $totalFound,
+            'page' => 1,
+            'request_params' => $this->buildSearchParameters($builder, 1, $builder->limit ?? $this->maxPerPage),
+        ];
     }
 
     /**
