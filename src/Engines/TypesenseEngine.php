@@ -16,13 +16,6 @@ use Typesense\Exceptions\TypesenseClientError;
 class TypesenseEngine extends Engine
 {
     /**
-     * The maximum amount of results that can be fetched per page.
-     *
-     * @var int
-     */
-    private int $maxPerPage = 250;
-
-    /**
      * The Typesense client instance.
      *
      * @var \Typesense\Client
@@ -37,7 +30,14 @@ class TypesenseEngine extends Engine
     protected array $searchParameters = [];
 
     /**
-     * The maximum amount of results that can be fetched for pagination.
+     * The maximum number of results that can be fetched per page.
+     *
+     * @var int
+     */
+    private int $maxPerPage = 250;
+
+    /**
+     * The maximum number of results that can be fetched during pagination.
      *
      * @var int
      */
@@ -201,7 +201,7 @@ class TypesenseEngine extends Engine
      */
     public function search(Builder $builder)
     {
-        // If the limit exceeds Typesense's capabilities, perform a paginated search
+        // If the limit exceeds Typesense's capabilities, perform a paginated search...
         if ($builder->limit >= $this->maxPerPage) {
             return $this->performPaginatedSearch($builder);
         }
@@ -226,6 +226,7 @@ class TypesenseEngine extends Engine
         $page = 1;
         $limit = min($builder->limit ?? $this->maxPerPage, $this->maxPerPage, $this->maxTotalResults);
         $remainingResults = min($builder->limit ?? $this->maxTotalResults, $this->maxTotalResults);
+
         $results = new Collection;
 
         while ($remainingResults > 0) {
@@ -233,10 +234,11 @@ class TypesenseEngine extends Engine
                 $builder,
                 $this->buildSearchParameters($builder, $page, $limit)
             );
+
             $results = $results->concat($search_res['hits'] ?? []);
 
             if ($page === 1) {
-                $total_found = $search_res['found'] ?? 0;
+                $totalFound = $search_res['found'] ?? 0;
             }
 
             $remainingResults -= $limit;
@@ -250,7 +252,7 @@ class TypesenseEngine extends Engine
         return [
             'hits' => $results->all(),
             'found' => $results->count(),
-            'out_of' => $total_found,
+            'out_of' => $totalFound,
             'page' => 1,
             'request_params' => $this->buildSearchParameters($builder, 1, $builder->limit ?? $this->maxPerPage),
         ];
