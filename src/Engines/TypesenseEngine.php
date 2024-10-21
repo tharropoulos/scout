@@ -398,7 +398,7 @@ class TypesenseEngine extends Engine
     /**
      * Parse the given filter value.
      *
-     * @param  array|string|bool|int|float  $value
+     * @param array|string|bool|int|float $value
      * @return array|bool|float|int|string
      */
     protected function parseFilterValue(array|string|bool|int|float $value)
@@ -424,7 +424,7 @@ class TypesenseEngine extends Engine
     protected function parseWhereFilter(array|string $value, string $key): string
     {
         return is_array($value)
-            ? sprintf('%s:%s', $key, implode('', $value))
+            ? sprintf('%s:[%s]', $key, implode(',', $value))
             : sprintf('%s:=%s', $key, $value);
     }
 
