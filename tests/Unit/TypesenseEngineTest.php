@@ -74,7 +74,6 @@ class TypesenseEngineTest extends TestCase
 
     public function test_parse_filter_value_method()
     {
-
         $this->assertEquals('true', $this->invokeMethod($this->engine, 'parseFilterValue', [true]));
         $this->assertEquals('false', $this->invokeMethod($this->engine, 'parseFilterValue', [false]));
         $this->assertEquals('25', $this->invokeMethod($this->engine, 'parseFilterValue', [25]));
@@ -90,7 +89,6 @@ class TypesenseEngineTest extends TestCase
 
     public function test_parse_where_filter_method()
     {
-
         $this->assertEquals('status:=active', $this->invokeMethod($this->engine, 'parseWhereFilter', ['active', 'status']));
         $this->assertEquals('age:=25', $this->invokeMethod($this->engine, 'parseWhereFilter', ['25', 'age']));
         $this->assertEquals('tags:[tag1,tag2,tag3]', $this->invokeMethod($this->engine, 'parseWhereFilter', [['tag1', 'tag2', 'tag3'], 'tags']));
@@ -98,7 +96,6 @@ class TypesenseEngineTest extends TestCase
 
     public function test_parse_where_in_filter_method()
     {
-
         $this->assertEquals('category:=[electronics, books]', $this->invokeMethod($this->engine, 'parseWhereInFilter', [['electronics', 'books'], 'category']));
         $this->assertEquals('id:=[1, 2, 3]', $this->invokeMethod($this->engine, 'parseWhereInFilter', [[1, 2, 3], 'id']));
     }
