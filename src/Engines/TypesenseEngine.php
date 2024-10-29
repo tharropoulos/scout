@@ -396,6 +396,25 @@ class TypesenseEngine extends Engine
     }
 
     /**
+     * Parse the given filter value.
+     *
+     * @param  array|string|bool|int|float  $value
+     * @return array|bool|float|int|string
+     */
+    protected function parseFilterValue(array|string|bool|int|float $value)
+    {
+        if (is_array($value)) {
+            return array_map([$this, 'parseFilterValue'], $value);
+        }
+
+        if (gettype($value) == 'boolean') {
+            return $value ? 'true' : 'false';
+        }
+
+        return $value;
+    }
+
+    /**
      * Create a "where" filter string.
      *
      * @param  array|string  $value
